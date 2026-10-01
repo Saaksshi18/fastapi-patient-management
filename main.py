@@ -25,23 +25,23 @@ class PatientUpdate(BaseModel):
     weight: Annotated[Optional[float], Field(default= None, gt=0)]
 
 
-@computed_field
-@property
-def bmi(self) -> float:
-    bmi = round(self.weight / (self.height ** 2), 2)
-    return bmi
+    @computed_field
+    @property
+    def bmi(self) -> float:
+        bmi = round(self.weight / (self.height ** 2), 2)
+        return bmi
 
-@computed_field
-@property
-def verdict(self) -> str:
-    if self.bmi < 18.5:
-        return 'Underweight'
-    elif 18.5 <= self.bmi < 25:
-        return 'Normal weight'
-    elif 25 <= self.bmi < 30:
-        return 'Overweight'
-    else:
-        return 'Obese'
+    @computed_field
+    @property
+    def verdict(self) -> str:
+        if self.bmi < 18.5:
+            return 'Underweight'
+        elif 18.5 <= self.bmi < 25:
+            return 'Normal weight'
+        elif 25 <= self.bmi < 30:
+            return 'Overweight'
+        else:
+            return 'Obese'
 
 def load_data():
     with open('patients.json','r') as f:
