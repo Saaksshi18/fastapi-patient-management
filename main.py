@@ -16,13 +16,13 @@ class Patient(BaseModel):
     weight: Annotated[float, Field(..., gt=0, description= 'Weight of the patient in kgs')]
 
 class PatientUpdate(BaseModel):
-    id: Annotated[Optional[str], Field(defaullt= None)]
-    name: Annotated[Optional[str], Field(defaullt= None)]
-    city: Annotated[Optional[str], Field(defaullt= None)]
-    age: Annotated[Optional[int], Field(defaullt= None, gt=0, lt=120, description= 'Age of the patient')]
-    gender: Annotated[Optional[Literal['male', 'female', 'others']], Field(defaullt= None)]
-    height: Annotated[Optional[float], Field(defaullt= None, gt=0)]
-    weight: Annotated[Optional[float], Field(defaullt= None, gt=0)]
+    id: Annotated[Optional[str], Field(default= None)]
+    name: Annotated[Optional[str], Field(default= None)]
+    city: Annotated[Optional[str], Field(default= None)]
+    age: Annotated[Optional[int], Field(default= None, gt=0, lt=120, description= 'Age of the patient')]
+    gender: Annotated[Optional[Literal['male', 'female', 'others']], Field(default= None)]
+    height: Annotated[Optional[float], Field(default= None, gt=0)]
+    weight: Annotated[Optional[float], Field(default= None, gt=0)]
 
 
 @computed_field
@@ -140,3 +140,16 @@ def update_patient(patient_id: str, patient_update: PatientUpdate):
         save_data(data)
 
         return JSONResponse(status_code=200, content={'message': 'Patient updated successfully'})
+
+@app.delete('/delete/{patient_id}')
+def delete_patient(patient_id: str):
+
+    data = load_data()
+
+    if patient_id not in data:
+        raise HTTPException(status_code = 404, detail= 'Patient not found')
+    del data[patient_id]
+
+    save_data(data)
+
+    return JSONResponse(status_code=200, content={'message': 'Patient deleted successfully'})
