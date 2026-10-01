@@ -15,16 +15,6 @@ class Patient(BaseModel):
     height: Annotated[float, Field(..., gt=0, description= 'Height of the patient in mts')]
     weight: Annotated[float, Field(..., gt=0, description= 'Weight of the patient in kgs')]
 
-class PatientUpdate(BaseModel):
-    id: Annotated[Optional[str], Field(default= None)]
-    name: Annotated[Optional[str], Field(default= None)]
-    city: Annotated[Optional[str], Field(default= None)]
-    age: Annotated[Optional[int], Field(default= None, gt=0, lt=120, description= 'Age of the patient')]
-    gender: Annotated[Optional[Literal['male', 'female', 'others']], Field(default= None)]
-    height: Annotated[Optional[float], Field(default= None, gt=0)]
-    weight: Annotated[Optional[float], Field(default= None, gt=0)]
-
-
     @computed_field
     @property
     def bmi(self) -> float:
@@ -42,6 +32,15 @@ class PatientUpdate(BaseModel):
             return 'Overweight'
         else:
             return 'Obese'
+
+class PatientUpdate(BaseModel):
+    id: Annotated[Optional[str], Field(default= None)]
+    name: Annotated[Optional[str], Field(default= None)]
+    city: Annotated[Optional[str], Field(default= None)]
+    age: Annotated[Optional[int], Field(default= None, gt=0, lt=120, description= 'Age of the patient')]
+    gender: Annotated[Optional[Literal['male', 'female', 'others']], Field(default= None)]
+    height: Annotated[Optional[float], Field(default= None, gt=0)]
+    weight: Annotated[Optional[float], Field(default= None, gt=0)]
 
 def load_data():
     with open('patients.json','r') as f:
@@ -124,22 +123,21 @@ def update_patient(patient_id: str, patient_update: PatientUpdate):
     updated_patient_info = patient_update.model_dump(exclude_unset=True) #pydantic to pythondict
 
     for key,value in updated_patient_info.items():
-
         existing_patient_info[key] = value
 
         #existing patient info > pydantic object > updated bmi+verdict 
-        existing_patient_info['id'] = patient_id
-        patient_pydantic_obj = Patient(**existing_patient_info)
+    existing_patient_info['id'] = patient_id
+    patient_pydantic_obj = Patient(**existing_patient_info)
         
         # #> pydantic object > dict > save into json file
-        existing_patient_info =  patient_pydantic_obj.model_dump(exclude=['id'])
+    existing_patient_info =  patient_pydantic_obj.model_dump(exclude=['id'])
 
         #add dict to data
-        data[patient_id] = existing_patient_info
+    data[patient_id] = existing_patient_info
 
-        save_data(data)
+    save_data(data)
 
-        return JSONResponse(status_code=200, content={'message': 'Patient updated successfully'})
+    return JSONResponse(status_code=200, content={'message': 'Patient updated successfully'})
 
 @app.delete('/delete/{patient_id}')
 def delete_patient(patient_id: str):
