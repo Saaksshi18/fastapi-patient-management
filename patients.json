@@ -48,5 +48,13 @@
         "weight": 75,
         "bmi": 31.22,
         "verdict": "Obese"
+    },
+    "P007": {
+        "name": "Varshita",
+        "city": "Mangalore",
+        "age": 22,
+        "gender": "female",
+        "height": 162.0,
+        "weight": 58.0
     }
 }
